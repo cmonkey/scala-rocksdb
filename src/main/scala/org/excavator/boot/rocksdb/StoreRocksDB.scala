@@ -3,7 +3,7 @@ package org.excavator.boot.rocksdb
 import java.nio.file.Files
 
 import org.rocksdb.util.SizeUnit
-import org.rocksdb.{CompactionStyle, CompressionType, Options, RocksDB}
+import org.rocksdb.{CompactionStyle, CompressionType, Options, RocksDB, WriteBatch, WriteOptions}
 import org.slf4j.LoggerFactory
 
 class StoreRocksDB {
@@ -50,6 +50,19 @@ class StoreRocksDB {
     assert(isOpen)
 
     rocksDB.put(k.getBytes, v.getBytes)
+  }
+
+  def putList(list: List[(String, String)]) = {
+    assert(isOpen)
+    val writeOpt = new WriteOptions()
+    val batch = new WriteBatch()
+
+    list.foreach(elem => {
+      val (k, v) = elem
+      batch.put(k.getBytes(encoding), v.getBytes(encoding))
+    })
+
+    rocksDB.write(writeOpt, batch)
   }
 }
 
