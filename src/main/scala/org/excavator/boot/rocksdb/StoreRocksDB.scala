@@ -1,13 +1,13 @@
 package org.excavator.boot.rocksdb
 
 import java.nio.charset.StandardCharsets
-import java.nio.file.Files
+import java.nio.file.{Files, Paths}
 
 import org.rocksdb.util.SizeUnit
 import org.rocksdb.{CompactionStyle, CompressionType, Options, RocksDB, WriteBatch, WriteOptions}
 import org.slf4j.LoggerFactory
 
-class StoreRocksDB {
+class StoreRocksDB(path: String) {
   val logger = LoggerFactory.getLogger(classOf[StoreRocksDB])
 
   val charset = StandardCharsets.UTF_8
@@ -19,12 +19,7 @@ class StoreRocksDB {
   private def init(): Unit = {
 
     try {
-      val path = Files.createTempDirectory("rocksdb")
-
-      val dbFile = Files.createTempFile(path, "rocksdb", ".db")
-      val dbFileName = dbFile.getFileName.toUri.getPath
-
-      logger.info("init dbFile Name = [{}]", dbFileName)
+      logger.info("init RocksDB path  = [{}]", path)
 
       RocksDB.loadLibrary()
 
@@ -37,7 +32,7 @@ class StoreRocksDB {
         .setCompressionType(CompressionType.SNAPPY_COMPRESSION)
         .setCompactionStyle(CompactionStyle.UNIVERSAL)
 
-      rocksDB = RocksDB.open(options, dbFileName)
+      rocksDB = RocksDB.open(options, path)
 
       isOpen = true
     }catch {
@@ -81,8 +76,28 @@ class StoreRocksDB {
       }
     }
   }
+
+  def shutdown(): Unit = {
+    try {
+      rocksDB.close()
+      isOpen = false
+      logger.info("shutdown RocksDB")
+    }catch {
+      case ex:Throwable => {
+        logger.error("shutdown failed Exception = [{}]", ex.getMessage:Any, ex:Any)
+      }
+    }
+  }
+
+  def clear(): Unit = {
+    try {
+      Files.delete(Paths.get(path))
+    }catch{
+      case ex:Throwable => logger.error("clear failed Exception = [{}]", ex.getMessage:Any, ex:Any)
+    }
+  }
 }
 
 object StoreRocksDB{
-  def apply(): StoreRocksDB = new StoreRocksDB()
+  def apply(path:String): StoreRocksDB = new StoreRocksDB(path)
 }
