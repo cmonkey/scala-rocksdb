@@ -1,16 +1,15 @@
 package org.excavator.boot.rocksdb.test
 
 import org.excavator.boot.rocksdb.StoreRocksDB
-import org.junit.jupiter.api.{DisplayName, Test}
+import org.junit.jupiter.api.{BeforeAll, DisplayName, Test}
 import org.junit.jupiter.api.Assertions._
-
 import org.slf4j.LoggerFactory
 
 
 class StoreRocksDBTests {
   val logger = LoggerFactory.getLogger(classOf[StoreRocksDBTests])
 
-  val storeRocksDB: StoreRocksDB = StoreRocksDB()
+  import StoreRocksDBTests._
 
   @Test
   @DisplayName("test rocks db is Open")
@@ -32,4 +31,25 @@ class StoreRocksDBTests {
     }
   }
 
+  @Test
+  @DisplayName("test batch write")
+  def testRocksDBBatchWrite(): Unit = {
+    val key = "cmonkey"
+    val value = "foo"
+
+    val tuple2 = Tuple2(key, value)
+
+    val list = List(tuple2, tuple2, tuple2, tuple2, tuple2 , tuple2, tuple2)
+
+    storeRocksDB.putList(list)
+  }
+
+}
+
+object StoreRocksDBTests{
+  var storeRocksDB:StoreRocksDB = null
+  @BeforeAll
+  def init(): Unit = {
+    storeRocksDB = StoreRocksDB()
+  }
 }
