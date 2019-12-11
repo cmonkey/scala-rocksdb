@@ -45,6 +45,12 @@ class StoreRocksDB {
   }
 
   init()
+
+  def put(k:String, v: String) = {
+    assert(isOpen)
+
+    rocksDB.put(k.getBytes, v.getBytes)
+  }
 }
 
 object StoreRocksDB{
