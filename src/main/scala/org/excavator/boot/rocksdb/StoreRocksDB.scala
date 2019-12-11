@@ -13,7 +13,7 @@ class StoreRocksDB {
 
   var isOpen = false
 
-  var rocksDB: RocksDB = null
+  private var rocksDB: RocksDB = null
 
   private def init(): Unit = {
 
