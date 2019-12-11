@@ -41,7 +41,7 @@ class StoreRocksDBTests {
 
     val tuple2 = Tuple2(key, value)
 
-    val list = List(tuple2, tuple2, tuple2, tuple2, tuple2 , tuple2, tuple2)
+    val list = List.fill(1000000)(tuple2)
 
     storeRocksDB.putList(list)
   }
