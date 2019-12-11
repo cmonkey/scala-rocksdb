@@ -18,4 +18,18 @@ class StoreRocksDBTests {
     assertEquals(true, storeRocksDB.isOpen)
   }
 
+  @Test
+  @DisplayName("test rocks db write/read")
+  def testRocksDBWriteReads(): Unit = {
+    val key = "cmonkey"
+    val value = "foo"
+
+    storeRocksDB.put(key, value)
+
+    storeRocksDB.get(key) match {
+      case None => logger.error("get key failed")
+      case Some(v) => assertEquals(v, value)
+    }
+  }
+
 }
