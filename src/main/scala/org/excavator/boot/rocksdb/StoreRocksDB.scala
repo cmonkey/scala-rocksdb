@@ -74,6 +74,7 @@ class StoreRocksDB {
     }catch {
       case ex:Throwable => {
         logger.error("get Exception = [{}]", ex.getMessage:Any, ex:Any)
+        None
       }
     }
   }
