@@ -1,5 +1,6 @@
 package org.excavator.boot.rocksdb
 
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 
 import org.rocksdb.util.SizeUnit
@@ -9,7 +10,7 @@ import org.slf4j.LoggerFactory
 class StoreRocksDB {
   val logger = LoggerFactory.getLogger(classOf[StoreRocksDB])
 
-  val encoding: String = "UTF-8"
+  val charset = StandardCharsets.UTF_8
 
   var isOpen = false
 
@@ -49,7 +50,7 @@ class StoreRocksDB {
   def put(k:String, v: String) = {
     assert(isOpen)
 
-    rocksDB.put(k.getBytes, v.getBytes)
+    rocksDB.put(k.getBytes(charset), v.getBytes(charset))
   }
 
   def putList(list: List[(String, String)]) = {
@@ -59,10 +60,22 @@ class StoreRocksDB {
 
     list.foreach(elem => {
       val (k, v) = elem
-      batch.put(k.getBytes(encoding), v.getBytes(encoding))
+      batch.put(k.getBytes(charset), v.getBytes(charset))
     })
 
     rocksDB.write(writeOpt, batch)
+  }
+
+  def get(k:String): Option[String] = {
+    assert(isOpen)
+    try{
+      val v = rocksDB.get(k.getBytes(charset))
+      Option(new String(v, charset))
+    }catch {
+      case ex:Throwable => {
+        logger.error("get Exception = [{}]", ex.getMessage:Any, ex:Any)
+      }
+    }
   }
 }
 
