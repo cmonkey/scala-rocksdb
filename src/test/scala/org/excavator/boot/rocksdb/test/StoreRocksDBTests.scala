@@ -1,7 +1,9 @@
 package org.excavator.boot.rocksdb.test
 
+import java.nio.file.Files
+
 import org.excavator.boot.rocksdb.StoreRocksDB
-import org.junit.jupiter.api.{BeforeAll, DisplayName, Test}
+import org.junit.jupiter.api.{AfterAll, BeforeAll, DisplayName, Test}
 import org.junit.jupiter.api.Assertions._
 import org.slf4j.LoggerFactory
 
@@ -48,8 +50,16 @@ class StoreRocksDBTests {
 
 object StoreRocksDBTests{
   var storeRocksDB:StoreRocksDB = null
+  val path = Files.createTempDirectory("RocksDB")
   @BeforeAll
+  @DisplayName("before all in init RocksDB")
   def init(): Unit = {
-    storeRocksDB = StoreRocksDB()
+    storeRocksDB = StoreRocksDB(path.toUri.getPath)
+  }
+
+  @AfterAll
+  @DisplayName("after all in shutdown store RocksDB")
+  def clear(): Unit = {
+    storeRocksDB.shutdown()
   }
 }
