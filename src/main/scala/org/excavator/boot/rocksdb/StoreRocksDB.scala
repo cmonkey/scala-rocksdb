@@ -19,9 +19,12 @@ class StoreRocksDB {
   private def init(): Unit = {
 
     try {
-      val dbFile = Files.createTempFile("rocksdb", ".db")
+      val path = Files.createTempDirectory("rocksdb")
 
+      val dbFile = Files.createTempFile(path, "rocksdb", ".db")
       val dbFileName = dbFile.getFileName.toUri.getPath
+
+      logger.info("init dbFile Name = [{}]", dbFileName)
 
       RocksDB.loadLibrary()
 
