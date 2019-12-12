@@ -134,6 +134,11 @@ class StoreRocksDB(path: String) {
 
     listBuffer.toList
   }
+
+  def multiGet(keys: java.util.List[Array[Byte]]) = {
+    assert(isOpen)
+    rocksDB.multiGetAsList(keys)
+  }
 }
 
 object StoreRocksDB{
