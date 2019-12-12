@@ -20,7 +20,9 @@ object StoreRocksDBApp extends App{
 
   val listBuffer = ListBuffer[Tuple2[String, String]]()
 
-  for(i <- 0 until 10){
+  val lastIndex = 100
+
+  for(i <- 0 until lastIndex){
     val key = keyPrefix + i
     val value = valuePrefix + i
 
@@ -35,7 +37,7 @@ object StoreRocksDBApp extends App{
 
   val searchStartTime = System.currentTimeMillis()
   println(s"start search time = ${searchStartTime}")
-  val index = 1000 - 7
+  val index = lastIndex - 1
 
   val getKey = keyPrefix + index
 
