@@ -2,6 +2,7 @@ package org.excavator.boot.rocksdb.test
 
 import java.nio.file.{Files, Paths}
 
+import com.google.common.collect.Lists
 import org.excavator.boot.rocksdb
 
 import scala.collection.mutable.ListBuffer
@@ -22,8 +23,14 @@ object StoreRocksDBApp extends App{
 
   val lastIndex = 100
 
+  val keys = Lists.newArrayList[Array[Byte]]()
+
   for(i <- 0 until lastIndex){
     val key = keyPrefix + i
+
+    val keyBytes = key.getBytes(rocksDB.charset)
+    keys.add(keyBytes)
+
     val value = valuePrefix + i
 
     val tuple2 = Tuple2(key, value)
@@ -53,6 +60,10 @@ object StoreRocksDBApp extends App{
 
   rocksDB.getBefore(keyPrefix).foreach(elem => {
     println(s"iterator key = ${elem._1} value = ${elem._2}")
+  })
+
+  rocksDB.multiGet(keys).forEach(elem => {
+    println(s"multiGet value = ${new String(elem, rocksDB.charset)}")
   })
 
 }
