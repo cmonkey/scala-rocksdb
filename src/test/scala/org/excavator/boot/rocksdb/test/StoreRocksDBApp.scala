@@ -15,33 +15,42 @@ object StoreRocksDBApp extends App{
 
   val rocksDB = rocksdb.StoreRocksDB(path.toUri.getPath)
 
+  val keyPrefix = "key_"
+  val valuePrefix = "value_"
+
   val listBuffer = ListBuffer[Tuple2[String, String]]()
 
-  for(i <- 0 until 10000000){
-    val key = "foo1_" + i
-    val value = "fvv_" + i
+  for(i <- 0 until 10){
+    val key = keyPrefix + i
+    val value = valuePrefix + i
 
     val tuple2 = Tuple2(key, value)
 
     listBuffer += tuple2
   }
 
-  //val list = listBuffer.toList
+  val list = listBuffer.toList
 
-  //rocksDB.putList(list)
+  rocksDB.putList(list)
 
   val searchStartTime = System.currentTimeMillis()
   println(s"start search time = ${searchStartTime}")
-  val index = 10000000 - 993
-  val key = "foo1_" + index
-  rocksDB.get(key) match {
+  val index = 1000 - 7
+
+  val getKey = keyPrefix + index
+
+  rocksDB.get(getKey) match {
     case Some(value) => {
       val currentTime = System.currentTimeMillis()
       println(s"search end time = ${currentTime}")
       val searchTime = currentTime - searchStartTime
-      println(s"get ${key} by value = ${value} and search time = ${searchTime}")
+      println(s"get ${getKey} by value = ${value} and search time = ${searchTime}")
     }
-    case None => println(s"search ${key} by value is null")
+    case None => println(s"search ${getKey} by value is null")
   }
+
+  rocksDB.getBefore(keyPrefix).foreach(elem => {
+    println(s"iterator key = ${elem._1} value = ${elem._2}")
+  })
 
 }
