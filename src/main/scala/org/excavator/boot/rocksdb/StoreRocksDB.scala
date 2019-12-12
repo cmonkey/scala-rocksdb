@@ -112,6 +112,12 @@ class StoreRocksDB(path: String) {
     }
   }
 
+  def getBeforeByJava(key:String): java.util.List[(String, String)] = {
+    assert(isOpen)
+
+    StoreRocksDBHelper.getBefore(key, rocksDB)
+  }
+
   def getBefore(key: String): List[(String, String)] = {
     assert(isOpen)
 
