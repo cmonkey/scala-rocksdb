@@ -77,6 +77,19 @@ class StoreRocksDB(path: String) {
     }
   }
 
+  def delete(k: String): Option[Boolean] = {
+    assert(isOpen)
+    try{
+      rocksDB.delete(k.getBytes(charset))
+      Option(true)
+    }catch{
+      case ex: Throwable => {
+        logger.error("delete Exception = [{}]", ex.getMessage(): Any, ex:Any)
+        None
+      }
+    }
+  }
+
   def shutdown(): Unit = {
     try {
       rocksDB.close()
