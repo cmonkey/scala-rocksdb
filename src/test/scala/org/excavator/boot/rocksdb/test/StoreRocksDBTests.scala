@@ -46,6 +46,17 @@ class StoreRocksDBTests {
     storeRocksDB.putList(list)
   }
 
+  @Test
+  @DisplayName("test delete ")
+  def testDelete(): Unit = {
+    val key = "cmonkey"
+
+    storeRocksDB.delete(key) match{
+      case Some(value) =>  assertEquals(true, value)
+      case None => logger.error("delete failed")
+    }
+  }
+
 }
 
 object StoreRocksDBTests{
