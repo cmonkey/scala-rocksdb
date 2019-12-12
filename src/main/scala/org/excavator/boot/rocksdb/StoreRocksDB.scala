@@ -7,6 +7,8 @@ import org.rocksdb.util.SizeUnit
 import org.rocksdb.{CompactionStyle, CompressionType, Options, RocksDB, WriteBatch, WriteOptions}
 import org.slf4j.LoggerFactory
 
+import scala.collection.mutable.ListBuffer
+
 class StoreRocksDB(path: String) {
   val logger = LoggerFactory.getLogger(classOf[StoreRocksDB])
 
@@ -108,6 +110,29 @@ class StoreRocksDB(path: String) {
     }catch{
       case ex:Throwable => logger.error("clear failed Exception = [{}]", ex.getMessage:Any, ex:Any)
     }
+  }
+
+  def getBefore(key: String): List[(String, String)] = {
+    assert(isOpen)
+
+    val iterator = rocksDB.newIterator()
+    iterator.seek(key.getBytes(charset))
+
+    val listBuffer = ListBuffer[(String, String)]()
+
+    while(iterator.isValid){
+      val key = new String(iterator.key(), charset)
+      val value = new String(iterator.value(), charset)
+      logger.info("getBefore key = [{}] value = [{}]", key:Any, value:Any)
+
+      val tuple2 = Tuple2(key, value)
+
+      listBuffer += tuple2
+
+      iterator.next()
+    }
+
+    listBuffer.toList
   }
 }
 
