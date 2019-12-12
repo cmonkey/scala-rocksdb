@@ -7,6 +7,8 @@ import org.junit.jupiter.api.{AfterAll, BeforeAll, DisplayName, Test}
 import org.junit.jupiter.api.Assertions._
 import org.slf4j.LoggerFactory
 
+import scala.collection.mutable.ListBuffer
+
 
 class StoreRocksDBTests {
   val logger = LoggerFactory.getLogger(classOf[StoreRocksDBTests])
@@ -36,12 +38,19 @@ class StoreRocksDBTests {
   @Test
   @DisplayName("test batch write")
   def testRocksDBBatchWrite(): Unit = {
-    val key = "cmonkey"
-    val value = "foo"
 
-    val tuple2 = Tuple2(key, value)
+    val listBuffer = ListBuffer[Tuple2[String, String]]()
+    for (i <- 0 until 10000){
+      val key = "cmonkey"+i
+      val value = "foo" + i
+      val tuple2 = Tuple2(key, value)
 
-    val list = List.fill(1000000)(tuple2)
+      listBuffer += tuple2
+    }
+
+    logger.info("batch readly list size = [{}]", listBuffer.size)
+
+    val list = listBuffer.toList
 
     storeRocksDB.putList(list)
   }
