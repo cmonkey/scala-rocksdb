@@ -62,6 +62,10 @@ object StoreRocksDBApp extends App{
     println(s"iterator key = ${elem._1} value = ${elem._2}")
   })
 
+  rocksDB.getBeforeByJava(keyPrefix).forEach(elem => {
+    println(s"iterator by java key = ${elem._1} value = ${elem._2}")
+  })
+
   rocksDB.multiGet(keys).forEach(elem => {
     println(s"multiGet value = ${new String(elem, rocksDB.charset)}")
   })
